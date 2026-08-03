@@ -38,7 +38,6 @@ import { closeDb, getDb } from "./db/client.js";
 import { pushSchema } from "./db/push.js";
 import { startMcpServer, stopMcpServer } from "./mcp/server.js";
 import { connectAllMcpServers, disconnectAllMcpServers } from "./mcp/client.js";
-import { isMainModule } from "./util/is-main-module.js";
 
 export const app = new Hono();
 
@@ -115,10 +114,8 @@ function shutdown(signal: string): void {
 process.on("SIGINT", () => shutdown("SIGINT"));
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 
-// Start server when executed directly (not when imported by tests).
-// Do NOT compare import.meta.url to `file://${argv[1]}` — breaks on Windows
-// (backslashes / missing slash after file:).
-if (isMainModule(import.meta.url)) {
+// Start server when executed directly (not when imported by tests)
+if (import.meta.url === `file://${process.argv[1]}`) {
   // Ensure DB is migrated + seeded before serving requests.
   getDb();
   pushSchema();
