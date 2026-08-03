@@ -9,11 +9,6 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "node scripts/lia.mjs start",
-    "stop": "node scripts/lia.mjs stop",
-    "restart": "node scripts/lia.mjs restart",
-    "status": "node scripts/lia.mjs status",
-    "start:fg": "node scripts/lia.mjs start --fg",
     "dev:backend": "npm run dev --workspace @lia/backend",
     "dev:frontend": "npm run dev --workspace @lia/desktop",
     "dev": "concurrently -n backend,frontend -c blue,magenta \"npm:dev:backend\" \"npm:dev:frontend\"",
