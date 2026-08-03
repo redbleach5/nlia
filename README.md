@@ -118,10 +118,18 @@ cp .env.example .env
 # 4. Run DB migration (creates ./apps/data/lia.db with kb_vec_virtual)
 npm run db:push
 
-# 5a. Web-only dev (backend + Vite frontend, no Tauri)
+# 5a. Web-only — background start/stop (recommended)
+npm start          # frees ports, starts backend+frontend, waits for health
+npm run status     # ports + /api/health
+npm stop           # stop + free :8787 / :5173
+#   → UI  http://127.0.0.1:5173
+#   → API http://127.0.0.1:8787/api/health
+#   logs: data/lia-dev.log
+
+# Attached to terminal (Ctrl+C stops):
+npm run start:fg
+# or classic foreground:
 npm run dev
-#   → backend:  http://127.0.0.1:8787
-#   → frontend: http://127.0.0.1:5173  (proxies /api/* to backend)
 
 # 5b. Desktop dev (Tauri webview, requires Rust toolchain + Tauri system deps)
 #     In a separate terminal:
@@ -129,7 +137,6 @@ npm run dev:backend
 #     Then:
 npm run tauri:dev
 ```
-
 The backend serves `GET /api/health` → `{ status, runtime, sqliteVec, vecVersion, kbVecTable, schemaVersion, … }`.
 The frontend (Vite dev server on port 5173) proxies `/api/*` to the backend on port 8787.
 
