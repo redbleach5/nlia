@@ -33,11 +33,6 @@ import { agentRoute } from "./routes/agent.js";
 import { codeRoute } from "./routes/code.js";
 import { vrmRoute } from "./routes/vrm.js";
 import { logger as pinoLogger } from "./util/logger.js";
-import { env } from "./util/env.js";
-import { closeDb, getDb } from "./db/client.js";
-import { pushSchema } from "./db/push.js";
-import { startMcpServer, stopMcpServer } from "./mcp/server.js";
-import { connectAllMcpServers, disconnectAllMcpServers } from "./mcp/client.js";
 
 export const app = new Hono();
 
@@ -101,44 +96,5 @@ app.onError((err, c) => {
   pinoLogger.error({ err, path: c.req.path }, "unhandled error");
   return c.json({ error: "internal", message: String(err) }, 500);
 });
-
-// Graceful shutdown
-function shutdown(signal: string): void {
-  pinoLogger.info({ signal }, "shutting down");
-  stopMcpServer();
-  void disconnectAllMcpServers().finally(() => {
-    closeDb();
-    process.exit(0);
-  });
-}
-process.on("SIGINT", () => shutdown("SIGINT"));
-process.on("SIGTERM", () => shutdown("SIGTERM"));
-
-// Start server when executed directly (not when imported by tests)
-if (import.meta.url === `file://${process.argv[1]}`) {
-  // Ensure DB is migrated + seeded before serving requests.
-  getDb();
-  pushSchema();
-
-  const { serve } = await import("@hono/node-server");
-  serve(
-    {
-      fetch: app.fetch,
-      hostname: env.backendHost,
-      port: env.backendPort,
-    },
-    (info) => {
-      pinoLogger.info(
-        { host: info.address, port: info.port, runtime: env.runtime },
-        "lia-backend listening",
-      );
-
-      // MCP integration (patched): start Lia's MCP server on :47832 and
-      // reconnect previously-registered external MCP client servers.
-      startMcpServer().catch((e) => pinoLogger.error({ err: e }, "MCP server failed to start"));
-      connectAllMcpServers().catch((e) => pinoLogger.error({ err: e }, "MCP clients failed to connect"));
-    },
-  );
-}
 
 export default app;

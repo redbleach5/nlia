@@ -91,47 +91,144 @@ lia-v3/
 └── package.json
 ```
 
-## Prerequisites
+## Требования
 
-| Tool | Version | Why |
-|------|---------|-----|
-| Node.js | ≥ 22 (24 LTS recommended) | Backend runtime (chosen — see Runtime Decision below) |
-| Bun | ≥ 1.3 (optional) | Alternative runtime, faster cold start |
-| Rust toolchain | stable | Tauri 2.0 desktop shell build (`tauri dev` / `tauri build`) |
-| Tauri system deps | see [tauri.app/start/prerequisites](https://tauri.app/start/prerequisites/) | webkit2gtk, GTK, librsvg, libsoup-3, libayatana-appindicator |
+| Инструмент | Версия | Зачем |
+|------------|--------|--------|
+| Node.js | ≥ 22 (лучше 24 LTS) | Рантайм бэкенда |
+| npm | идёт с Node | Workspaces и скрипты |
+| Ollama | актуальная | Локальная LLM на `http://127.0.0.1:11434` — [ollama.com](https://ollama.com) |
+| Bun | ≥ 1.3 (опционально) | Альтернативный рантайм |
+| Rust | stable | Только для оболочки Tauri |
+| Зависимости Tauri | [документация](https://tauri.app/start/prerequisites/) | Свои для Linux / Windows (WebView2) / macOS |
 
-> The Hono backend + Vite frontend run **without** Rust/Tauri — useful for web-only dev.
-> Tauri is only required to produce the desktop binary.
+**Windows — нативные модули:** для `better-sqlite3` и `sqlite-vec` нужен C++ toolchain. Поставьте [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) с рабочей нагрузкой **Desktop development with C++** (или полный VS с тем же workload). Без этого `npm install` часто падает на этих пакетах.
 
-## Quick start
+> Backend (Hono) + фронт (Vite) работают **без** Rust/Tauri — этого достаточно для веб-разработки.
+> Tauri нужен только для десктопного бинарника.
+
+## Быстрый старт
+
+### 1. Клон и установка
+
+**macOS / Linux**
 
 ```bash
-# 1. Install deps
+git clone https://github.com/redbleach5/nlia.git
+cd nlia
 npm install
-
-# 2. Approve native-addon install scripts (better-sqlite3, esbuild, sqlite-vec)
+# Если попросят одобрить native-скрипты (better-sqlite3, esbuild, sqlite-vec):
 npm approve-scripts --allow-scripts-pending -y
-
-# 3. Prepare .env
-cp .env.example .env
-
-# 4. Run DB migration (creates ./apps/data/lia.db with kb_vec_virtual)
-npm run db:push
-
-# 5a. Web-only dev (backend + Vite frontend, no Tauri)
-npm run dev
-#   → backend:  http://127.0.0.1:8787
-#   → frontend: http://127.0.0.1:5173  (proxies /api/* to backend)
-
-# 5b. Desktop dev (Tauri webview, requires Rust toolchain + Tauri system deps)
-#     In a separate terminal:
-npm run dev:backend
-#     Then:
-npm run tauri:dev
 ```
 
-The backend serves `GET /api/health` → `{ status, runtime, sqliteVec, vecVersion, kbVecTable, schemaVersion, … }`.
-The frontend (Vite dev server on port 5173) proxies `/api/*` to the backend on port 8787.
+**Windows (PowerShell)**
+
+```powershell
+git clone https://github.com/redbleach5/nlia.git
+cd nlia
+npm install
+# Если спросят про native-скрипты:
+npm approve-scripts --allow-scripts-pending -y
+```
+
+Если установка падает на `better-sqlite3` / `sqlite-vec` — поставьте VS Build Tools (см. выше), затем:
+
+```powershell
+Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
+npm install
+```
+
+### 2. Файл окружения
+
+```bash
+# macOS / Linux
+cp .env.example .env
+```
+
+```powershell
+# Windows PowerShell
+Copy-Item .env.example .env
+```
+
+Обычно хватает значений по умолчанию:
+
+| Переменная | По умолчанию | Заметка |
+|------------|--------------|---------|
+| `LIA_BACKEND_HOST` | `127.0.0.1` | Лучше `127.0.0.1`, а не `localhost` (на Windows бывают сюрпризы с IPv6) |
+| `LIA_BACKEND_PORT` | `8787` | Порт API |
+| `OLLAMA_HOST` | `http://127.0.0.1:11434` | Должен совпадать с запущенной Ollama |
+| `VITE_BACKEND_URL` | `http://127.0.0.1:8787` | Куда Vite проксирует `/api` |
+
+Перед **Настройки → Модель** запустите Ollama и скачайте модель, например: `ollama pull qwen3:8b`.
+
+### 3. База данных
+
+Из **корня репозитория**:
+
+```bash
+npm run db:push
+```
+
+SQLite создаётся в `apps/backend/data/` (путь привязан к пакету backend, не к текущей папке в терминале).
+
+### 4. Запуск (веб-UI)
+
+Один терминал, из корня репо:
+
+```bash
+npm run dev
+```
+
+| | URL |
+|--|-----|
+| Интерфейс | http://127.0.0.1:5173 |
+| Health API | http://127.0.0.1:8787/api/health |
+
+Остановка — `Ctrl+C`. Точка входа бэкенда — `apps/backend/src/server.ts`: порт слушается на Windows, macOS и Linux одинаково.
+
+**Два терминала** (удобно на Windows):
+
+```powershell
+# A — в логе должно быть: lia-backend listening
+npm run dev:backend
+
+# B
+npm run dev:frontend
+```
+
+### 5. Проверка
+
+```bash
+# macOS / Linux
+curl -s http://127.0.0.1:8787/api/health
+```
+
+```powershell
+# Windows PowerShell
+Invoke-RestMethod http://127.0.0.1:8787/api/health
+```
+
+Должен прийти JSON со статусом (обычно ещё `sqliteVec: true`). Затем откройте http://127.0.0.1:5173 → **Настройки → Модель** — статус Ollama, а не `ApiError HTTP 500`.
+
+### 6. Десктоп (Tauri, по желанию)
+
+```bash
+npm run dev:backend   # терминал A
+npm run tauri:dev     # терминал B — нужны Rust и зависимости Tauri под вашу ОС
+```
+
+### Проблемы на Windows
+
+| Симптом | Причина | Что сделать |
+|---------|---------|-------------|
+| UI открывается, в **Модель** — `ApiError HTTP 500` / `null` | Бэкенд не слушает порт; Vite-прокси пустой | В терминале бэкенда должно быть `lia-backend listening`. Запустите в два терминала. Проверьте health URL выше. |
+| `npm install` падает на native-модулях | Нет MSVC toolchain | Поставьте VS Build Tools (C++), удалите `node_modules`, снова `npm install` |
+| Порт занят (`8787`, `5173`) | Старый Node/Vite ещё жив | `netstat -ano \| findstr :8787` → `taskkill /PID <pid> /F` |
+| Ollama «Недоступен» | Ollama не запущена или неверный URL | Запустите Ollama; проверьте `OLLAMA_HOST` в `.env` |
+| Запрос файрвола | Первый bind на 8787/5173 | Разрешите для частных сетей |
+| Команды «ничего не делают» | Не та папка | Всегда из корня репо (`nlia\`), а не только из `apps\desktop` |
+
+Бэкенд отдаёт `GET /api/health`. Vite на `:5173` проксирует `/api/*` на `:8787`.
 
 ## M0 acceptance criteria — verified
 
