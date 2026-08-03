@@ -36,7 +36,11 @@ export class ApiError extends Error {
 async function jsonOrThrow<T>(res: Response): Promise<T> {
   const body = await res.json().catch(() => null);
   if (!res.ok) {
-    throw new ApiError(res.status, body, `HTTP ${res.status}: ${JSON.stringify(body)}`);
+    const detail =
+      body == null
+        ? "empty response (backend down or Vite proxy failed — check npm run status / data/lia-dev.log)"
+        : JSON.stringify(body);
+    throw new ApiError(res.status, body, `HTTP ${res.status}: ${detail}`);
   }
   return body as T;
 }

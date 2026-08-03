@@ -27,14 +27,24 @@ const updateSchema = z.object({
 });
 
 settingsRoute.get("/", async (c) => {
-  const settings = await getOllamaSettings();
-  return c.json({
-    baseUrl: settings.baseUrl,
-    chat: settings.chat,
-    agent: settings.agent,
-    heavy: settings.heavy,
-    embed: settings.embed,
-  } satisfies ModelSlots);
+  try {
+    const settings = await getOllamaSettings();
+    return c.json({
+      baseUrl: settings.baseUrl,
+      chat: settings.chat,
+      agent: settings.agent,
+      heavy: settings.heavy,
+      embed: settings.embed,
+    } satisfies ModelSlots);
+  } catch (err) {
+    return c.json(
+      {
+        error: "settings_unavailable",
+        message: err instanceof Error ? err.message : String(err),
+      },
+      500,
+    );
+  }
 });
 
 settingsRoute.put("/", async (c) => {

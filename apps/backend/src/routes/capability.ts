@@ -14,6 +14,22 @@ import type { CapabilityProfile } from "@lia/shared";
 export const capabilityRoute = new Hono();
 
 capabilityRoute.get("/", async (c) => {
-  const profile = await getCapabilityProfile();
-  return c.json(profile satisfies CapabilityProfile);
+  try {
+    const profile = await getCapabilityProfile();
+    return c.json(profile satisfies CapabilityProfile);
+  } catch (err) {
+    // Never leave the UI with an empty Vite/proxy body — always JSON.
+    return c.json(
+      {
+        ollamaOk: false,
+        error: err instanceof Error ? err.message : String(err),
+        models: [],
+        chatModels: [],
+        embedModels: [],
+        effective: { chat: "", agent: "", heavy: "", embed: "" },
+        embedExplicit: false,
+      } satisfies CapabilityProfile,
+      200,
+    );
+  }
 });
