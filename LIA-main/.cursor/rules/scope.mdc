@@ -1,0 +1,14 @@
+---
+description: Workspace scope — prefer high-signal paths; skip build/deps/runtime noise unless the task needs them
+alwaysApply: true
+---
+
+# Scope (Lia)
+
+Follow **`AGENTS.md`** at the repo root for the full map.
+
+**Prefer:** `src/lib/`, `src/app/api/`, `src/components/lia/`, `tests/`, relevant `docs/`, `prisma/schema.prisma`.
+
+**Deprioritize** (noise unless the task explicitly needs that path): `node_modules/`, `.next/`, `db/`, `download/`, weights (`*.pt` / `*.onnx` / …), logs, `.env` (use `.env.example`), side folders like `.zscripts/` / `examples/`.
+
+Start from the path or symptom in the user request. Prefer grep and targeted reads over a full-repo walk. Soft rule: low-signal trees waste tokens — they are not a hard ban when the bug is there.

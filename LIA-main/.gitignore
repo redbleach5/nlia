@@ -1,0 +1,79 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Testing
+coverage/
+
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Production
+*.tsbuildinfo
+next-env.d.ts
+
+# Runtime data
+db/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Local Ollama inventory dumps (may include custom Modelfiles) — keep off GitHub
+ollama-backup-*.json
+
+# Logs
+dev.log
+server.log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Sandbox / dev tooling — NOT part of Lia
+.zscripts/
+tool-results/
+skills/
+mini-services/
+examples/
+Caddyfile
+
+# VRM model — large binary, download via Settings UI or API /api/settings/download-vrm
+public/models/*.vrm
+
+# Model weights anywhere (never commit)
+*.pt
+*.onnx
+
+# Generated artifacts (user-uploaded / Lia-generated)
+download/lia-artifacts/
+download/lia-runtime-pids/
+download/agent-workspaces/
+
+# User uploads (screenshots, etc.) — NOT part of Lia (root only; not API routes)
+/upload/
+
+# Misc
+.DS_Store
+*.pem
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Diagnostics
+diagnose-*.log
+diagnose-dev.log
+diagnose-dev.log.err

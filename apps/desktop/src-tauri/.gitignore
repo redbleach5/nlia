@@ -1,0 +1,6 @@
+# Tauri src-tauri — local build artifacts
+/target/
+/gen/
+
+# Cargo lock is NOT committed for libraries (Tauri apps are binaries, so it should be).
+# Per Tauri convention we DO commit Cargo.lock once first build succeeds.

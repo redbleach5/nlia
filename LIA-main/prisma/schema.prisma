@@ -1,0 +1,384 @@
+// Lia v2 — Prisma schema
+// SQLite + sqlite-vec (loaded separately via better-sqlite3)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// Episodes — каждый чат = отдельный эпизод
+// ============================================================================
+model Episode {
+  id        String   @id @default(cuid())
+  title     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  endedAt   DateTime?
+  summary   String?
+
+  messages         Message[]
+  chatAttachments  ChatAttachment[]
+  episodeFacts     EpisodeFact[]
+  vectorMemories   VectorMemory[]
+  emotionalMemories EmotionalMemory[]
+  agentTasks       AgentTask[]
+
+  @@index([updatedAt])  // for listEpisodes(orderBy: updatedAt desc)
+}
+
+// ============================================================================
+// Messages — все роли в одной таблице (user / companion / tool / system)
+// ============================================================================
+model Message {
+  id          String   @id @default(cuid())
+  episodeId   String
+  episode     Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  // 'user' | 'companion' | 'tool' | 'system'
+  role String
+
+  content String
+
+  /** JSON snapshot: [{ id, name, mimeType, kind, sizeBytes }] for UI reload */
+  attachmentsJson String?
+
+  // JSON: EmotionVector snapshot at the moment of this message
+  emotionJson String?
+
+  // JSON: [{ name, input, output, success }] — tool calls made during this message
+  toolCallsJson String?
+
+  // LLM usage stats
+  tokensIn   Int?
+  tokensOut  Int?
+  durationMs Int?
+
+  createdAt DateTime @default(now())
+
+  chatAttachments ChatAttachment[]
+
+  @@index([episodeId])
+  @@index([createdAt])
+  @@index([episodeId, createdAt])  // composite for getMessages(episodeId, orderBy createdAt)
+}
+
+// ============================================================================
+// Chat attachments — файлы к конкретному сообщению (не KB, не agent fsScope).
+// ============================================================================
+model ChatAttachment {
+  id           String   @id @default(cuid())
+  episodeId    String
+  episode      Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  messageId    String?
+  message      Message? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+
+  originalName String
+  mimeType     String
+  sizeBytes    Int
+  /** image | text | pdf | docx */
+  kind         String
+  /** Relative to PATHS.artifacts, e.g. chat-attachments/{episodeId}/{id}_{name} */
+  storageKey   String
+  /** Extracted text preview for prompt (text/pdf/docx); null for images */
+  textPreview  String?
+
+  createdAt DateTime @default(now())
+
+  @@index([episodeId])
+  @@index([messageId])
+  @@index([episodeId, messageId])
+}
+
+// ============================================================================
+// Только то, что пользователь сам сообщил и что относится ко всем чатам:
+// имя, профессия, любимый язык, часовой пояс и т.п.
+//
+// ВАЖНО: ключи с префиксом "user." — legacy (мигрируются в Person);
+// "lia." — про саму Лию; "workspace." — память проекта.
+// Профили 2–3 людей: Person + PersonFact (не общий user.*).
+model GlobalFact {
+  key       String   @id
+  value     String
+  confidence Float   @default(0.6)
+  hitCount  Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================================
+// People — до 3 собеседников на инстанс (имя + факты профиля).
+// Эпизод привязывается через EpisodeFact key `lia.personId`.
+// ============================================================================
+model Person {
+  id          String   @id @default(cuid())
+  displayName String
+  /** JSON string[] — доп. имена для распознавания */
+  aliasesJson String   @default("[]")
+  isDefault   Boolean  @default(false)
+  lastSeenAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  facts PersonFact[]
+
+  @@index([isDefault])
+  @@index([displayName])
+}
+
+model PersonFact {
+  id         String   @id @default(cuid())
+  personId   String
+  person     Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+
+  /** profession, favorite_language, … — без префикса user. */
+  key        String
+  value      String
+  confidence Float    @default(0.7)
+  updatedAt  DateTime @updatedAt
+
+  @@unique([personId, key])
+  @@index([personId])
+}
+
+// ============================================================================
+// Episode facts — контекстные факты, привязанные к конкретному чату
+// ============================================================================
+// Примеры: "текущий проект — Lia v2", "пользователь просит проанализировать X",
+// "упоминали библиотеку Drizzle". При закрытии чата эти факты исчезают.
+model EpisodeFact {
+  id        String   @id @default(cuid())
+  episodeId String
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  key       String
+  value     String
+
+  ts DateTime @default(now())
+
+  @@unique([episodeId, key])
+  @@index([episodeId])
+}
+
+// ============================================================================
+// Vector memory — семантический поиск по контексту чата
+// ============================================================================
+// ВСЕГДА привязана к episodeId. Утечек между чатами нет архитектурно.
+//
+// Embedding — 768-dim float32 (nomic-embed-text).
+// Хранится как BLOB; для поиска используется sqlite-vec extension,
+// загружаемое через better-sqlite3 (не через Prisma).
+//
+// sourceType — пространство поиска (без смешивания dialogue / emotional / fact / summary):
+//   'dialogue'  — реплики чата (recall в chat pipeline)
+//   'emotional' — эмоциональные якоря (recallEmotionalAnchors)
+//   'fact'      — извлечённые факты (fact-extraction.ts)
+//   'summary'   — итоги agent-задач (runner.ts)
+model VectorMemory {
+  id         String   @id @default(cuid())
+  episodeId  String
+  episode    Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  // 'dialogue' | 'emotional' | 'fact' | 'summary'
+  sourceType String
+
+  text       String
+
+  // 768-dim float32 packed as Buffer
+  embedding  Bytes
+
+  ts DateTime @default(now())
+
+  @@index([episodeId])
+  @@index([sourceType])
+}
+
+// ============================================================================
+// Emotional memory — эмоциональные якоря ("как я себя чувствовал когда...")
+// ============================================================================
+// Вдохновлено моделью человеческой памяти: мы помним не только что было,
+// но и как мы себя чувствовали. Лия может сказать: "В прошлый раз, когда
+// мы обсуждали этот проект, ты был раздражён — сейчас ты выглядишь спокойнее,
+// могу я вернуться к той теме?"
+//
+// Decay: intensity экспоненциально затухает (halfTime ~180 дней) — см.
+// src/lib/memory/emotional-memory.ts.
+//
+// Consolidation (ReflectionEngine — src/lib/memory/reflection-engine.ts):
+//   Сливает похожие эмоциональные якоря в summary (consolidated=true),
+//   пишет sourceIds, индексирует summary в vec_virtual, удаляет старые anchors.
+//   Поля ниже заполняются ReflectionEngine (не RESERVED).
+model EmotionalMemory {
+  id         String   @id @default(cuid())
+  episodeId  String
+  episode    Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  // Тип эмоции: 'frustration' | 'joy' | 'sadness' | 'anger' | 'anxiety' |
+  // 'enthusiasm' | 'curiosity' | 'warmth' | 'boredom' | 'other'
+  emotion    String
+
+  // Интенсивность 0..1 — насколько сильно пользователь это чувствовал
+  intensity  Float    @default(0.5)
+
+  // Что вызвало эмоцию — короткое описание (LLM-извлечение)
+  trigger    String
+
+  // Контекст — что пользователь говорил в этот момент (до 1000 символов)
+  context    String
+
+  // Текущий тон пользователя при этом сообщении (rule-based perceive result)
+  // JSON: { joy, curiosity, calm, irritation, sadness }
+  emotionVectorJson String?
+
+  // Embedding контекста — для поиска похожих ситуаций (через sqlite-vec)
+  embedding  Bytes?
+
+  // Флаг консолидации — заполняется ReflectionEngine (summary anchors).
+  consolidated Boolean @default(false)
+  // Если consolidated=true — ID исходных якорей (JSON array).
+  sourceIds  String?
+
+  ts         DateTime @default(now())
+
+  @@index([episodeId])
+  @@index([emotion])
+  @@index([intensity])
+}
+
+// ============================================================================
+// Agent tasks — долгоживущие задачи с checkpointing
+// ============================================================================
+model AgentTask {
+  id        String   @id @default(cuid())
+  episodeId String
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  // Исходная задача пользователя (без template/system overlay)
+  goal String
+
+  // Agent template preset: 'general' | 'researcher' | 'coder' | null
+  // Overlay is resolved at runtime into the LLM system channel — never into goal/UI.
+  templateName String?
+
+  // 'pending' | 'planning' | 'executing' | 'waiting_input' | 'waiting_confirmation'
+  // | 'synthesizing' | 'done' | 'failed' | 'cancelled'
+  status String @default("pending")
+
+  // JSON: { goal, steps: string[], needsTools, complexity }
+  planJson String?
+
+  currentStep Int @default(0)
+
+  // JSON: [{ thought, action, input, observation, ts, durationMs, tokensUsed }]
+  stepsJson String @default("[]")
+
+  // Lifecycle timestamps
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  startedAt    DateTime?
+  completedAt  DateTime?
+
+  // Error message if failed
+  error String?
+
+  // Limits
+  maxSteps       Int @default(15)
+  maxDurationSec Int @default(600)
+
+  // JSON array of tool names; null = all tools allowed
+  toolsWhitelist String?
+
+  // Filesystem scope — path prefix for fs operations; null = no fs
+  fsScope String?
+
+  // JSON: serialized state for resume after restart
+  checkpointJson String?
+
+  // Final result
+  resultSummary String?
+
+  // JSON: [{ kind, path, meta }] — saved files / screenshots / plots
+  // Артефакты хранятся inline в этой JSON-колонке (см. src/lib/agent/task.ts →
+  // parseArtifacts helper), а также в таблице Setting под ключом `artifact:<id>`
+  // (см. src/lib/tools/save-artifact.ts). Отдельная таблица AgentArtifact не
+  // используется и удалена из схемы.
+  artifactsJson String @default("[]")
+
+  @@index([episodeId])
+  @@index([status])
+}
+
+// ============================================================================
+// Settings — key/value for runtime config (ollama url, model, etc.)
+// ============================================================================
+model Setting {
+  key       String   @id
+  value     String
+  // P2-4 fix (M-DB): added updatedAt for audit/debugging.
+  updatedAt DateTime @updatedAt
+}
+
+// ============================================================================
+// Knowledge Base — глобальная база знаний (documents, folder, url, codebase)
+// ============================================================================
+//
+// Не привязана к episode_id. Доступ через KB agent tools; write — UI/API.
+// См. docs/kb/README.md
+
+/// Источник знаний.
+model Source {
+  id            String   @id @default(cuid())
+  // 'document' | 'folder' | 'url' | 'codebase'
+  type          String
+  name          String
+  // JSON: type-specific config (document / folder / url / codebase)
+  config        String
+  status        String   @default("idle")
+  tags          String   @default("[]")
+  lastIndexedAt DateTime?
+  chunkCount    Int      @default(0)
+  errorMessage  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  chunks  Chunk[]
+
+  @@index([type])
+  @@index([status])
+}
+
+/// Чанк источника — фрагмент контента с embedding в kb_vec_virtual.
+///
+/// Embedding НЕ хранится в этой таблице (в отличие от VectorMemory) —
+/// он живёт только в kb_vec_virtual. Content hash используется для
+/// дедупликации при реиндексации (см. docs/kb/ §5.1).
+model Chunk {
+  id          String   @id @default(cuid())
+  sourceId    String
+  source      Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+
+  // Сырой текст чанка
+  content     String
+  // LLM-сгенерированное summary (для re-ranking и context compression).
+  // Phase 1: всегда null. Phase 4+ может заполняться.
+  summary     String?
+  // SHA-256 от content — для дедупликации при реиндексации
+  contentHash String
+
+  // JSON metadata: document heading/path, codebase symbol fields, etc.
+  metadata    String
+
+  // Иерархия (документы с заголовками)
+  parentId    String?
+  position    Int      @default(0)
+
+  // Audit
+  indexedAt   DateTime @default(now())
+
+  @@index([sourceId])
+  @@index([contentHash])
+  @@index([parentId])
+}

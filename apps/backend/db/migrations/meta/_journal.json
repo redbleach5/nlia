@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1785518479000,
+      "tag": "0000_absent_magma",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1785519008584,
+      "tag": "0001_previous_lord_hawal",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1785519980994,
+      "tag": "0002_charming_cammi",
+      "breakpoints": true
+    }
+  ]
+}

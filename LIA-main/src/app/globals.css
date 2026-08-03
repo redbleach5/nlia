@@ -1,0 +1,2013 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-display);
+  --font-serif: var(--font-display);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-3: var(--accent-3);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-text-dim: var(--text-dim);
+  --color-text-faint: var(--text-faint);
+  --color-taupe: var(--taupe);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* ============================================================================
+   Lia v2 — «Companion Workspace»
+   Смешение тёплой companion-палитры с pro-density Cursor/Raycast-стилистики.
+   Палитра: тёплый off-white + карий акцент (companion) + pro-density (workspace)
+   Шрифты: Geist Sans (UI), JetBrains Mono (code), Plus Jakarta Sans (display)
+   ========================================================================== */
+
+:root {
+  /* Radius scale */
+  --radius: 0.625rem;
+
+  /* ──────────────────────────────────────────────────────────────────────
+     Surfaces — тёплый off-white с лёгким льняным подтоном (companion layer)
+     ────────────────────────────────────────────────────────────────────── */
+  --background: #f8f5f0;
+  --surface: #fffdf8;
+  --surface-2: #f1ece3;
+  --surface-3: #e8e1d4;
+
+  /* Text — тёплый чёрный, не нейтральный zinc */
+  --foreground: #1c1a17;
+  --muted-foreground: #6b665e;
+  --text-dim: #9b958a;
+  --text-faint: #a39e93;
+
+  /* ──────────────────────────────────────────────────────────────────────
+     Accent system — два акцента:
+     • --accent (карий) — для companion-действий (Лия, её сообщения, эмоции)
+     • --accent-2 (приглушённый синий) — для pro-actions (агент, KB, коротцы)
+     • --accent-3 (янтарный) — для attention / progress
+     ────────────────────────────────────────────────────────────────────── */
+  --primary: #8b6f47;
+  --primary-foreground: #ffffff;
+  --accent: #8b6f47;
+  --accent-foreground: #ffffff;
+  --accent-2: #4a5870;
+  --accent-2-foreground: #ffffff;
+  --accent-3: #c89456;
+  --accent-3-foreground: #ffffff;
+
+  /* Secondary — нейтральный серо-бежевый */
+  --taupe: #c9a886;
+  --secondary: #f4f1ea;
+  --secondary-foreground: #1c1a17;
+
+  /* Borders — тёплые, лёгкие. --border-strong для active-состояний */
+  --border: #e6dfd2;
+  --border-strong: #d4cab8;
+  --input: #e6dfd2;
+  --ring: #8b6f47;
+
+  /* Cards / popovers — белые */
+  --card: #ffffff;
+  --card-foreground: #1c1a17;
+  --popover: #ffffff;
+  --popover-foreground: #1c1a17;
+
+  /* Muted */
+  --muted: #f4f1ea;
+
+  /* Status — тёплая палитра */
+  --destructive: #c2664a;
+  --success: #6b8e5a;
+  --warning: #c89456;
+  --info: #5a7a9b;
+
+  /* Sidebar */
+  --sidebar: #f4f1ea;
+  --sidebar-foreground: #1c1a17;
+  --sidebar-primary: #8b6f47;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ebe4d4;
+  --sidebar-accent-foreground: #1c1a17;
+  --sidebar-border: #e6dfd2;
+  --sidebar-ring: #8b6f47;
+
+  /* Charts */
+  --chart-1: #8b6f47;
+  --chart-2: #6b8e5a;
+  --chart-3: #c9a886;
+  --chart-4: #c2664a;
+  --chart-5: #5a7a9b;
+
+  /* ──────────────────────────────────────────────────────────────────────
+     Elevation — мягкие тени, тёплый undertone
+     ────────────────────────────────────────────────────────────────────── */
+  --shadow-xs: 0 1px 2px rgba(28, 26, 23, 0.04);
+  --shadow-sm: 0 1px 3px rgba(28, 26, 23, 0.06), 0 1px 2px rgba(28, 26, 23, 0.04);
+  --shadow-md: 0 4px 12px rgba(28, 26, 23, 0.06), 0 2px 4px rgba(28, 26, 23, 0.04);
+  --shadow-lg: 0 12px 32px rgba(28, 26, 23, 0.08), 0 4px 8px rgba(28, 26, 23, 0.04);
+  --shadow-glow: 0 0 24px rgba(201, 168, 134, 0.18);
+
+  /* ──────────────────────────────────────────────────────────────────────
+     Spacing rhythm — 8px grid (pro-density)
+     ────────────────────────────────────────────────────────────────────── */
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.5rem;    /* 24px */
+  --space-6: 2rem;      /* 32px */
+  --space-7: 3rem;      /* 48px */
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Dark theme — тёплый уголь, не нейтрально-чёрный (для будущего dual-mode)
+   ───────────────────────────────────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="auto"] {
+    --background: #15140f;
+    --surface: #1c1a15;
+    --surface-2: #25221b;
+    --surface-3: #2e2a22;
+    --foreground: #f0ebde;
+    --muted-foreground: #a39e8d;
+    --text-dim: #7a7568;
+    --text-faint: #6b665e;
+    --primary: #d4a574;
+    --primary-foreground: #1c1a15;
+    --accent: #d4a574;
+    --accent-foreground: #1c1a15;
+    --accent-2: #8ba4c4;
+    --accent-3: #e0b274;
+    --taupe: #8a6f50;
+    --secondary: #25221b;
+    --secondary-foreground: #f0ebde;
+    --border: #2e2a22;
+    --border-strong: #3d3829;
+    --input: #2e2a22;
+    --ring: #d4a574;
+    --card: #1c1a15;
+    --card-foreground: #f0ebde;
+    --popover: #1c1a15;
+    --popover-foreground: #f0ebde;
+    --muted: #25221b;
+    --destructive: #d97a5a;
+    --success: #8eb07a;
+    --warning: #e0b274;
+    --info: #7a9bc4;
+    --sidebar: #1c1a15;
+    --sidebar-foreground: #f0ebde;
+    --sidebar-primary: #d4a574;
+    --sidebar-primary-foreground: #1c1a15;
+    --sidebar-accent: #25221b;
+    --sidebar-accent-foreground: #f0ebde;
+    --sidebar-border: #2e2a22;
+    --sidebar-ring: #d4a574;
+    --chart-1: #d4a574;
+    --chart-2: #8eb07a;
+    --chart-3: #8a6f50;
+    --chart-4: #d97a5a;
+    --chart-5: #7a9bc4;
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+    --shadow-glow: 0 0 24px rgba(212, 165, 116, 0.2);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    background: var(--background);
+    /* Тёплый radial-gradient фон — сохраняем из «Тёплого льна», но легче */
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "cv11", "ss03", "ss04", "tnum";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-image:
+      radial-gradient(ellipse 120% 80% at 50% -20%, rgba(201, 168, 134, 0.10), transparent 55%),
+      radial-gradient(ellipse 80% 50% at 100% 50%, rgba(139, 111, 71, 0.03), transparent 50%);
+    background-attachment: fixed;
+    /* Pro-density: tighter line-height для UI */
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Custom scrollbars — тонкие, тёплые, едва заметные */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(139, 111, 71, 0.18);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 111, 71, 0.32);
+  }
+
+  /* Selection — тёплая */
+  ::selection {
+    background: rgba(139, 111, 71, 0.18);
+    color: var(--foreground);
+  }
+
+  /* Focus ring — унифицированный, теплый */
+  :focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+}
+
+/* ============================================================================
+   Type scale — 8px rhythm, Geist-optimized
+   Классы .lia-text-* для явного контроля над типографикой
+   ========================================================================== */
+
+.lia-text-xs     { font-size: 0.6875rem; line-height: 1rem;     letter-spacing: 0.01em; }
+.lia-text-sm     { font-size: 0.8125rem; line-height: 1.1875rem; letter-spacing: 0; }
+.lia-text-base   { font-size: 0.875rem;  line-height: 1.3125rem; letter-spacing: 0; }
+.lia-text-md     { font-size: 0.9375rem; line-height: 1.375rem;  letter-spacing: -0.005em; }
+.lia-text-lg     { font-size: 1.0625rem; line-height: 1.4375rem; letter-spacing: -0.01em; }
+.lia-text-xl     { font-size: 1.25rem;   line-height: 1.625rem;  letter-spacing: -0.015em; }
+.lia-text-2xl    { font-size: 1.5rem;    line-height: 1.875rem;  letter-spacing: -0.02em; }
+.lia-text-display{ font-size: 2rem;      line-height: 2.25rem;   letter-spacing: -0.025em; }
+
+.lia-text-mono   { font-family: var(--font-mono); font-feature-settings: "tnum", "cv01"; }
+.lia-text-serif  { font-family: var(--font-serif); }
+
+/* ============================================================================
+   Companion Workspace — utility classes
+   ========================================================================== */
+
+/* ──────────────────────────────────────────────────────────────────────
+   Glass panels — полупрозрачные с размытием
+   ────────────────────────────────────────────────────────────────────── */
+.lia-glass {
+  background: rgba(244, 241, 234, 0.72);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+}
+
+.lia-glass-strong {
+  background: rgba(255, 253, 248, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+
+.lia-glass-popover {
+  background: rgba(255, 253, 248, 0.96);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Slim header (36px) — главное отличие от предыдущего 48px
+   ────────────────────────────────────────────────────────────────────── */
+.lia-header {
+  height: 2.75rem; /* 44px — room for companion brand */
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 30;
+}
+
+.lia-header-logo {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(135deg, var(--accent) 0%, #a08260 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-xs);
+  font-family: var(--font-display);
+}
+
+.lia-header-divider {
+  width: 1px;
+  height: 1rem;
+  background: var(--border);
+  flex-shrink: 0;
+  margin: 0 0.25rem;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Slim icon button — для шапки и sidebar'ов
+   ────────────────────────────────────────────────────────────────────── */
+.lia-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 0.4375rem;
+  color: var(--muted-foreground);
+  background: transparent;
+  transition: background-color 0.12s ease, color 0.12s ease, transform 0.12s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.lia-icon-btn:hover {
+  background: var(--surface-2);
+  color: var(--foreground);
+}
+
+.lia-icon-btn:active {
+  transform: scale(0.94);
+}
+
+.lia-icon-btn[data-active="true"] {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+}
+
+.lia-icon-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  outline-offset: 1px;
+}
+
+.lia-icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Status chips — для tier / mode / capability индикаторов
+   ────────────────────────────────────────────────────────────────────── */
+.lia-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.1875rem 0.4375rem;
+  border-radius: 0.3125rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.lia-chip:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--foreground);
+}
+
+.lia-chip-dot {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.lia-chip-mono {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: -0.01em;
+}
+
+/* Aliases — components historically used lia-status-chip*; keep one chip system */
+.lia-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3125rem;
+  padding: 0.1875rem 0.4375rem;
+  border-radius: 0.3125rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.lia-status-chip:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--foreground);
+}
+
+.lia-status-chip-icon-only {
+  padding: 0.25rem 0.375rem;
+  gap: 0.25rem;
+}
+
+.lia-status-chip-dot {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Sidebar item — для episodes / KB sources / activity list
+   ────────────────────────────────────────────────────────────────────── */
+.lia-sidebar-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.4375rem 0.5rem;
+  border-radius: 0.4375rem;
+  cursor: pointer;
+  transition: background-color 0.1s ease, transform 0.1s ease;
+  color: var(--foreground);
+  position: relative;
+}
+
+.lia-sidebar-item:hover {
+  background: var(--surface-2);
+}
+
+.lia-sidebar-item[data-active="true"] {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.lia-sidebar-item[data-active="true"]::before {
+  content: '';
+  position: absolute;
+  left: -0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.125rem;
+  height: 1rem;
+  background: var(--accent);
+  border-radius: 0.0625rem;
+}
+
+.lia-sidebar-item-title {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--foreground);
+  line-height: 1.1875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lia-sidebar-item-meta {
+  font-size: 0.6875rem;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  line-height: 1rem;
+}
+
+.lia-sidebar-item-preview {
+  font-size: 0.6875rem;
+  color: var(--muted-foreground);
+  line-height: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  margin-top: 0.125rem;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Section label — маленькая uppercase подпись для группировки
+   ────────────────────────────────────────────────────────────────────── */
+.lia-section-label {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Chat message variants — visual hierarchy для разных типов контента
+   ────────────────────────────────────────────────────────────────────── */
+
+/* User message — справа, теплый фон */
+.lia-msg-user {
+  align-self: flex-end;
+  max-width: 80%;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.875rem 0.875rem 0.25rem 0.875rem;
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  font-size: 0.875rem;
+  line-height: 1.375rem;
+  color: var(--foreground);
+}
+
+/* Companion message — голос Лии (display), мягкая граница без «карточки» */
+.lia-msg-companion {
+  align-self: flex-start;
+  max-width: 88%;
+  padding: 0.625rem 0.9375rem;
+  border-radius: 0.875rem 0.875rem 0.875rem 0.25rem;
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+/* Agent step — inline block в чате, с левым accent-border */
+.lia-msg-agent-step {
+  align-self: stretch;
+  padding: 0.625rem 0.75rem 0.625rem 0.875rem;
+  border-radius: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent-2);
+  font-size: 0.8125rem;
+  line-height: 1.3125rem;
+  color: var(--muted-foreground);
+  position: relative;
+}
+
+/* Tool call — compact mono block */
+.lia-msg-tool-call {
+  align-self: stretch;
+  padding: 0.5rem 0.625rem;
+  border-radius: 0.4375rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.1875rem;
+  color: var(--muted-foreground);
+}
+
+/* Lightweight +/- diff tint (no highlighter) */
+.lia-diff-add {
+  color: color-mix(in srgb, #34d399 75%, var(--foreground));
+  background: color-mix(in srgb, #34d399 8%, transparent);
+}
+.lia-diff-del {
+  color: color-mix(in srgb, #fb7185 75%, var(--foreground));
+  background: color-mix(in srgb, #fb7185 8%, transparent);
+}
+
+/* Citation — inline badge */
+.lia-citation {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1875rem;
+  padding: 0.0625rem 0.3125rem;
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, var(--accent-2) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-2) 22%, transparent);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--accent-2);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+  vertical-align: baseline;
+  margin: 0 0.0625rem;
+}
+
+.lia-citation:hover {
+  background: color-mix(in srgb, var(--accent-2) 22%, transparent);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Avatar stage — 3 состояния (full / portrait / hidden)
+   ────────────────────────────────────────────────────────────────────── */
+.lia-avatar-col-full {
+  width: 20rem;       /* 320px */
+  flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Мини-портрет — legacy full-height column (kept for rare right-side use) */
+.lia-avatar-col-portrait {
+  width: 11rem;
+  flex-shrink: 0;
+  background: var(--surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.lia-avatar-col-portrait.lia-avatar-side-left {
+  border-right: 1px solid var(--border);
+}
+
+.lia-avatar-col-portrait.lia-avatar-side-right {
+  border-left: 1px solid var(--border);
+}
+
+.lia-avatar-col-hidden {
+  width: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: none;
+}
+
+.lia-avatar-mini-frame {
+  position: absolute;
+  top: 1.25rem;
+  left: 0.625rem;
+  right: 0.625rem;
+  aspect-ratio: 3 / 4;
+  max-height: min(22rem, calc(100% - 5rem));
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  background: var(--surface-2);
+}
+
+/* Presence stage default backdrop — theme tokens, not hardcoded linen */
+.lia-presence-stage-fallback {
+  background: linear-gradient(
+    to bottom,
+    var(--background) 0%,
+    var(--surface) 45%,
+    var(--surface-2) 100%
+  );
+}
+
+/* Circular companion face — beside last Lia message / empty-state hero */
+.lia-companion-circle {
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  background: var(--surface);
+  cursor: pointer;
+  overflow: hidden;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.lia-companion-circle:hover {
+  box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.08));
+  transform: translateY(-1px);
+}
+
+.lia-companion-circle-md {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+}
+
+.lia-companion-circle-lg {
+  width: 7.5rem;
+  height: 7.5rem;
+  border-radius: 9999px;
+}
+
+/* Тёплое свечение вокруг аватара */
+.lia-avatar-glow {
+  box-shadow: 0 0 60px rgba(201, 168, 134, 0.15);
+}
+
+/* Эмоциональная аура */
+@keyframes lia-aura-breathe {
+  0%, 100% { opacity: calc(0.28 + var(--lia-aura-strength, 0.5) * 0.18); transform: scale(1); }
+  50% { opacity: calc(0.38 + var(--lia-aura-strength, 0.5) * 0.22); transform: scale(1.01); }
+}
+
+.lia-emotion-aura {
+  background: radial-gradient(
+    ellipse 75% 60% at 50% 68%,
+    color-mix(in srgb, var(--lia-aura-color, #c9a886) 40%, transparent),
+    transparent 78%
+  );
+  animation: lia-aura-breathe 5s ease-in-out infinite;
+}
+
+.lia-sidebar-panel {
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.6);
+}
+
+.lia-presence-stage {
+  isolation: isolate;
+}
+
+.lia-presence-portrait-crop > * {
+  transform-origin: 50% 18%;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Panel — унифицированная панель под сценой / в drawer'е
+   ────────────────────────────────────────────────────────────────────── */
+.lia-panel {
+  border-radius: 0.625rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0.75rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.lia-panel-inset {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 0.4375rem;
+  padding: 0.625rem;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Composer — поле ввода чата
+   ────────────────────────────────────────────────────────────────────── */
+.lia-chat-composer {
+  border-radius: 0.75rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-xs);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lia-chat-composer:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent),
+    var(--shadow-xs);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Drawer — для KB sidebar (overlay, не отбирает место у чата)
+   ────────────────────────────────────────────────────────────────────── */
+@keyframes lia-drawer-enter {
+  from { transform: translateX(100%); opacity: 0.6; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes lia-drawer-exit {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(100%); opacity: 0.6; }
+}
+
+.lia-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.25);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 40;
+  animation: lia-fade-in 0.15s ease-out;
+}
+
+.lia-drawer-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 22rem;     /* 352px */
+  max-width: 90vw;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  z-index: 41;
+  display: flex;
+  flex-direction: column;
+  animation: lia-drawer-enter 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lia-drawer-panel[data-state="closed"] {
+  animation: lia-drawer-exit 0.18s ease-in forwards;
+  pointer-events: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   Animations — message fade-in, breathing, blink, talking, sparkles
+   (сохраняем из «Тёплого льна»)
+   ────────────────────────────────────────────────────────────────────── */
+
+/* Blinking cursor for streaming text */
+@keyframes lia-cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.lia-cursor::after {
+  content: '▍';
+  margin-left: 2px;
+  color: var(--accent);
+  animation: lia-cursor-blink 1s steps(1) infinite;
+}
+
+/* Avatar breath animation */
+@keyframes lia-breath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.015); }
+}
+.lia-breathing {
+  animation: lia-breath 4s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Avatar blink */
+@keyframes lia-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95%, 98% { transform: scaleY(0.1); }
+}
+.lia-blink {
+  animation: lia-blink 5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* Subtle fade-in for messages */
+@keyframes lia-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.lia-fade-in {
+  animation: lia-fade-in 0.15s ease-out;
+}
+
+/* Slide-in for drawer items / sidebar */
+@keyframes lia-slide-in-right {
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.lia-slide-in-right {
+  animation: lia-slide-in-right 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Speaking mouth animation */
+@keyframes lia-mouth-talk {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.6); }
+}
+.lia-talking .lia-mouth {
+  animation: lia-mouth-talk 0.25s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/* ============================================================================
+   Agent thought bubble — анимации появления и смены шага
+   ========================================================================== */
+@keyframes lia-bubble-enter {
+  from { opacity: 0; transform: translateY(-8px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.lia-bubble-enter { animation: lia-bubble-enter 0.3s ease-out; }
+
+@keyframes lia-bubble-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3px); }
+}
+.lia-bubble-bounce { animation: lia-bubble-bounce 0.4s ease-in-out; }
+
+@keyframes lia-cursor-blink-agent {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.lia-typewriter-cursor { animation: lia-cursor-blink-agent 0.8s steps(1) infinite; }
+
+/* ============================================================================
+   Stage FAB + popovers (режим / инструменты на сцене)
+   ========================================================================== */
+.lia-stage-fab {
+  background: rgba(255, 253, 248, 0.88);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+}
+
+@keyframes lia-popover-enter-kf {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes lia-popover-exit-kf {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(6px) scale(0.98); }
+}
+
+.lia-popover-enter { animation: lia-popover-enter-kf 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.lia-popover-exit  { animation: lia-popover-exit-kf 0.16s ease-in forwards; }
+
+.lia-stage-popover {
+  background: rgba(255, 253, 248, 0.96);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+@keyframes lia-stagger-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.lia-stagger-list .lia-stagger-item {
+  animation: lia-stagger-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes lia-tools-dialog-in {
+  from { opacity: 0; transform: translateY(20px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes lia-tools-dialog-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(12px) scale(0.98); }
+}
+
+.lia-tools-dialog[data-state='open']  { animation: lia-tools-dialog-in  0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.lia-tools-dialog[data-state='closed']{ animation: lia-tools-dialog-out 0.2s ease-in forwards; }
+
+.lia-tools-section {
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.lia-tools-section:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Мерцающие звёздочки — индикатор любопытства */
+.lia-mood-sparkles {
+  position: relative;
+  display: inline-block;
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.lia-mood-sparkle {
+  position: absolute;
+  background: currentColor;
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%,
+    50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+  );
+  animation: lia-sparkle-twinkle 2.2s ease-in-out infinite;
+}
+
+.lia-mood-sparkle-1 { top: 0;            left: 0.3125rem;  width: 0.4375rem; height: 0.4375rem; animation-delay: 0s;    }
+.lia-mood-sparkle-2 { top: 0.4375rem;    left: 0;          width: 0.3125rem; height: 0.3125rem; animation-delay: 0.45s; }
+.lia-mood-sparkle-3 { top: 0.375rem;     right: 0;         width: 0.3125rem; height: 0.3125rem; animation-delay: 0.95s; }
+
+@keyframes lia-sparkle-twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.75) rotate(0deg);   }
+  45%      { opacity: 1;    transform: scale(1)    rotate(12deg);  }
+  70%      { opacity: 0.6;  transform: scale(0.9)  rotate(-6deg);  }
+}
+
+/* ============================================================================
+   Status dot (для tier / agent activity / KB source)
+   ========================================================================== */
+.lia-status-dot {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 9999px;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+}
+
+.lia-status-dot-stage {
+  width: 0.6875rem;
+  height: 0.6875rem;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 1px 3px rgba(28, 26, 23, 0.12);
+}
+
+/* ============================================================================
+   Tooltip-подсказка для hotkey
+   ========================================================================== */
+.lia-kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.125rem;
+  padding: 0.0625rem 0.3125rem;
+  border-radius: 0.25rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-bottom-width: 2px;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  line-height: 1rem;
+  letter-spacing: 0;
+}
+
+/* ============================================================================
+   Onboarding — empty state с примерами возможностей
+   ========================================================================== */
+.lia-onboarding-card {
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lia-onboarding-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.lia-onboarding-card-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+  margin-bottom: 0.625rem;
+}
+
+/* ============================================================================
+   Slim divider
+   ========================================================================== */
+.lia-divider {
+  height: 1px;
+  background: var(--border);
+  border: none;
+  margin: 0.5rem 0;
+}
+
+.lia-divider-strong {
+  height: 1px;
+  background: var(--border-strong);
+  border: none;
+  margin: 0.75rem 0;
+}
+
+/* ============================================================================
+   Animation utilities
+   ========================================================================== */
+.lia-transition-fast   { transition: all 0.12s ease; }
+.lia-transition-normal { transition: all 0.18s ease; }
+.lia-transition-slow   { transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* Spring-like easing для интерактивных элементов */
+.lia-ease-spring {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Shared chat content width — messages, composer, agent workbench */
+.lia-chat-rail {
+  max-width: 920px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+/* Agent workbench — inline над composer */
+.lia-agent-workbench .lia-focus-waiting > div {
+  /* AgentWaitingPrompt defaults to mx-3 for avatar overlay */
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+}
+
+.lia-workbench-embed .lia-section-label {
+  letter-spacing: 0.06em;
+}
+
+/* Terminal log — theme-aware CRT (classic warm dark; WOW uses tokens) */
+.lia-terminal-log {
+  background: #1a1612;
+  color: #e8dcc8;
+}
+
+:root[data-theme="wow"] .lia-terminal-log {
+  background: rgba(8, 6, 14, 0.92);
+  color: var(--foreground);
+  border-color: rgba(255, 240, 220, 0.12);
+}
+
+:root[data-theme="quiet"] .lia-terminal-log {
+  background: #1c1f22;
+  color: #e8ebe6;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================================
+   ╔═════════════════════════════════════════════════════════════════════╗
+   ║  WOW MODE — «Северное сияние»                                        ║
+   ║  Тёмная палитра, без ambient orbs и без glow.                        ║
+   ╚═════════════════════════════════════════════════════════════════════╝
+   Активируется через [data-theme="wow"] на <html>.
+   ========================================================================== */
+
+:root[data-theme="wow"] {
+  --background: #0d0a14;
+  --surface: #14101c;
+  --surface-2: #1c1726;
+  --surface-3: #261f33;
+
+  --foreground: #f5eddf;
+  --muted-foreground: #a89fb5;
+  --text-dim: #6e6585;
+  --text-faint: #5c5570;
+
+  --primary: #ff8a5b;
+  --primary-foreground: #14101c;
+  --accent: #ff8a5b;
+  --accent-foreground: #14101c;
+  --accent-2: #6dd5ff;
+  --accent-2-foreground: #14101c;
+  --accent-3: #ffb84d;
+  --accent-3-foreground: #14101c;
+
+  --taupe: #6b5d8a;
+  --secondary: #1c1726;
+  --secondary-foreground: #f5eddf;
+
+  --border: rgba(255, 240, 220, 0.10);
+  --border-strong: rgba(255, 240, 220, 0.18);
+  --input: rgba(255, 240, 220, 0.12);
+  --ring: #ff8a5b;
+
+  /* Solid surfaces — dialogs/popovers must not be translucent glass */
+  --card: #1c1726;
+  --card-foreground: #f5eddf;
+  --popover: #1c1726;
+  --popover-foreground: #f5eddf;
+
+  --muted: rgba(255, 240, 220, 0.05);
+
+  --destructive: #ff5b7e;
+  --success: #5bd98a;
+  --warning: #ffb84d;
+  --info: #6dd5ff;
+
+  --sidebar: #14101c;
+  --sidebar-foreground: #f5eddf;
+  --sidebar-primary: #ff8a5b;
+  --sidebar-primary-foreground: #14101c;
+  --sidebar-accent: rgba(255, 138, 91, 0.12);
+  --sidebar-accent-foreground: #f5eddf;
+  --sidebar-border: rgba(255, 240, 220, 0.08);
+  --sidebar-ring: #ff8a5b;
+
+  --chart-1: #ff8a5b;
+  --chart-2: #5bd98a;
+  --chart-3: #6dd5ff;
+  --chart-4: #ff5b7e;
+  --chart-5: #ffb84d;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.55);
+  --shadow-glow: none;
+  --shadow-glow-cyan: none;
+  --shadow-glow-amber: none;
+
+  --radius: 0.75rem;
+}
+
+:root[data-theme="wow"] body {
+  background: var(--background);
+  overflow-x: hidden;
+}
+
+:root[data-theme="wow"] .lia-header {
+  background: var(--surface);
+  border-bottom-color: var(--border);
+}
+
+:root[data-theme="wow"] .lia-header-logo {
+  background: linear-gradient(135deg, #ff8a5b 0%, #ffb84d 100%);
+}
+
+:root[data-theme="wow"] .lia-header-divider {
+  background: var(--border);
+}
+
+:root[data-theme="wow"] .lia-icon-btn {
+  color: var(--muted-foreground);
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+:root[data-theme="wow"] .lia-icon-btn:hover {
+  background: rgba(255, 138, 91, 0.10);
+  color: var(--accent);
+  border-color: rgba(255, 138, 91, 0.20);
+}
+
+:root[data-theme="wow"] .lia-icon-btn[data-active="true"] {
+  background: rgba(255, 138, 91, 0.15);
+  color: var(--accent);
+  border-color: rgba(255, 138, 91, 0.30);
+}
+
+:root[data-theme="wow"] .lia-chip {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--muted-foreground);
+}
+
+:root[data-theme="wow"] .lia-chip:hover {
+  background: rgba(255, 138, 91, 0.10);
+  border-color: rgba(255, 138, 91, 0.25);
+  color: var(--accent);
+}
+
+:root[data-theme="wow"] .lia-sidebar-item {
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+:root[data-theme="wow"] .lia-sidebar-item:hover {
+  background: rgba(255, 240, 220, 0.04);
+}
+
+:root[data-theme="wow"] .lia-sidebar-item[data-active="true"] {
+  background: rgba(255, 138, 91, 0.12);
+  border-color: rgba(255, 138, 91, 0.15);
+}
+
+:root[data-theme="wow"] .lia-sidebar-item[data-active="true"]::before {
+  background: var(--accent);
+  width: 0.1875rem;
+  height: 1.25rem;
+}
+
+:root[data-theme="wow"] .lia-sidebar-item-title {
+  color: var(--foreground);
+}
+
+:root[data-theme="wow"] .lia-sidebar-item-preview {
+  color: var(--muted-foreground);
+}
+
+:root[data-theme="wow"] .lia-msg-user {
+  background: rgba(255, 138, 91, 0.14);
+  border: 1px solid rgba(255, 138, 91, 0.28);
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+:root[data-theme="wow"] .lia-msg-companion {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+:root[data-theme="wow"] .lia-msg-agent-step {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent-2);
+  color: var(--muted-foreground);
+}
+
+:root[data-theme="wow"] .lia-msg-tool-call {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+:root[data-theme="wow"] .lia-citation {
+  background: rgba(109, 213, 255, 0.12);
+  border: 1px solid rgba(109, 213, 255, 0.25);
+  color: var(--accent-2);
+}
+
+:root[data-theme="wow"] .lia-citation:hover {
+  background: rgba(109, 213, 255, 0.20);
+}
+
+:root[data-theme="wow"] .lia-avatar-col-full,
+:root[data-theme="wow"] .lia-avatar-col-portrait {
+  background: var(--surface);
+  box-shadow: none;
+}
+
+:root[data-theme="wow"] .lia-avatar-col-full,
+:root[data-theme="wow"] .lia-avatar-col-portrait.lia-avatar-side-right {
+  border-left-color: var(--border);
+}
+
+:root[data-theme="wow"] .lia-avatar-col-portrait.lia-avatar-side-left {
+  border-right-color: var(--border);
+}
+
+:root[data-theme="wow"] .lia-avatar-glow {
+  box-shadow: none;
+}
+
+:root[data-theme="wow"] .lia-emotion-aura {
+  opacity: 0.22;
+  filter: none;
+}
+
+:root[data-theme="wow"] .lia-panel {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-theme="wow"] .lia-panel-inset {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:root[data-theme="wow"] .lia-chat-composer {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+:root[data-theme="wow"] .lia-chat-composer:focus-within {
+  border-color: rgba(255, 138, 91, 0.40);
+  box-shadow: 0 0 0 3px rgba(255, 138, 91, 0.12);
+}
+
+:root[data-theme="wow"] .lia-drawer-overlay {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+:root[data-theme="wow"] .lia-drawer-panel {
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: -16px 0 32px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="wow"] .lia-sidebar-episodes,
+:root[data-theme="wow"] aside[class*="lia-sidebar"] {
+  background: var(--sidebar);
+}
+
+:root[data-theme="wow"] .lia-onboarding-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+:root[data-theme="wow"] .lia-onboarding-card:hover {
+  border-color: rgba(255, 138, 91, 0.35);
+}
+
+:root[data-theme="wow"] .lia-onboarding-card-icon {
+  background: rgba(255, 138, 91, 0.15);
+}
+
+:root[data-theme="wow"] .lia-kbd {
+  background: var(--surface-2);
+  border-color: var(--border);
+  border-bottom-width: 2px;
+  color: var(--muted-foreground);
+}
+
+:root[data-theme="wow"] .lia-section-label {
+  color: var(--text-dim);
+  letter-spacing: 0.08em;
+}
+
+:root[data-theme="wow"] .lia-status-dot {
+  box-shadow: 0 0 0 1.5px var(--surface);
+}
+
+:root[data-theme="wow"] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 240, 220, 0.14);
+}
+
+:root[data-theme="wow"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 240, 220, 0.28);
+}
+
+:root[data-theme="wow"] ::selection {
+  background: rgba(255, 138, 91, 0.30);
+  color: var(--foreground);
+}
+
+:root[data-theme="wow"] .lia-cursor::after {
+  color: var(--accent);
+}
+
+:root[data-theme="wow"] .lia-chat-chrome {
+  background: var(--surface);
+}
+
+:root[data-theme="wow"] .lia-agent-workbench {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+:root[data-theme="wow"] .lia-agent-workbench > .lia-chat-rail > div.rounded-2xl,
+:root[data-theme="wow"] .lia-agent-workbench > .lia-chat-rail > div.rounded-xl {
+  background: var(--surface-2);
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+:root[data-theme="wow"] .lia-stage-fab {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-theme="wow"] .lia-stage-popover {
+  background: var(--popover);
+  border: 1px solid var(--border);
+}
+
+:root[data-theme="wow"] .lia-glass-strong {
+  background: var(--surface);
+}
+
+/* ============================================================================
+   ╔═════════════════════════════════════════════════════════════════════╗
+   ║  QUIET STUDIO — минималистичный светлый, японско-скандинавский       ║
+   ║  Воздух вместо границ, один sage-green акцент, серый текст,         ║
+   ║  no glass, no gradients, no glow. Только тишина и воздух.           ║
+   ╚═════════════════════════════════════════════════════════════════════╝
+   Активируется через [data-theme="quiet"] на <html>.
+   ========================================================================== */
+
+:root[data-theme="quiet"] {
+  /* Surfaces — чистый off-white с лёгким серо-зелёным undertone */
+  --background: #fafaf7;
+  --surface: #ffffff;
+  --surface-2: #f4f4ef;
+  --surface-3: #ebebe4;
+
+  /* Text — нейтральный серый, не тёплый */
+  --foreground: #1f2226;
+  --muted-foreground: #6b7280;
+  --text-dim: #9ca3af;
+  --text-faint: #a8aeb8;
+
+  /* Accent system — один sage-green акцент, всё остальное серое */
+  --primary: #5b8a72;
+  --primary-foreground: #ffffff;
+  --accent: #5b8a72;
+  --accent-foreground: #ffffff;
+  --accent-2: #6b7280;            /* slate gray для pro-actions */
+  --accent-2-foreground: #ffffff;
+  --accent-3: #8b7355;            /* warm taupe для attention */
+  --accent-3-foreground: #ffffff;
+
+  /* Secondary — neutral */
+  --taupe: #c4b8a4;
+  --secondary: #f4f4ef;
+  --secondary-foreground: #1f2226;
+
+  /* Borders — почти невидимые, только там где функционально */
+  --border: #ededea;
+  --border-strong: #d4d4cf;
+  --input: #ededea;
+  --ring: #5b8a72;
+
+  /* Cards / popovers — чистый белый, no glass */
+  --card: #ffffff;
+  --card-foreground: #1f2226;
+  --popover: #ffffff;
+  --popover-foreground: #1f2226;
+
+  /* Muted */
+  --muted: #f4f4ef;
+
+  /* Status — приглушённые */
+  --destructive: #b56161;
+  --success: #6b9b7d;
+  --warning: #b89968;
+  --info: #6b87a8;
+
+  /* Sidebar — на тон темнее фона, без gradient */
+  --sidebar: #f4f4ef;
+  --sidebar-foreground: #1f2226;
+  --sidebar-primary: #5b8a72;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ebebe4;
+  --sidebar-accent-foreground: #1f2226;
+  --sidebar-border: #ededea;
+  --sidebar-ring: #5b8a72;
+
+  /* Charts — приглушённые */
+  --chart-1: #5b8a72;
+  --chart-2: #6b87a8;
+  --chart-3: #b89968;
+  --chart-4: #b56161;
+  --chart-5: #8b7355;
+
+  /* Elevation — едва заметные, без warm tint */
+  --shadow-xs: 0 1px 2px rgba(31, 34, 38, 0.03);
+  --shadow-sm: 0 1px 2px rgba(31, 34, 38, 0.04);
+  --shadow-md: 0 2px 8px rgba(31, 34, 38, 0.05), 0 1px 2px rgba(31, 34, 38, 0.03);
+  --shadow-lg: 0 8px 24px rgba(31, 34, 38, 0.06), 0 2px 4px rgba(31, 34, 38, 0.03);
+  --shadow-glow: none;             /* no glow в quiet mode */
+  --shadow-glow-cyan: none;
+  --shadow-glow-amber: none;
+
+  /* Radius — больше скругления, мягче */
+  --radius: 0.75rem;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: body — чистый фон, no gradients, no orbs
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] body {
+  background: var(--background);
+  background-image: none;          /* убираем radial-gradient из base */
+  background-attachment: auto;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: header — чистый white, no glass
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-header {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid var(--border);
+}
+
+:root[data-theme="quiet"] .lia-header-logo {
+  background: var(--accent);
+  box-shadow: none;
+}
+
+:root[data-theme="quiet"] .lia-header-divider {
+  background: var(--border);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: icon buttons — minimal hover (no glow, no shadow)
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-icon-btn {
+  color: var(--muted-foreground);
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+:root[data-theme="quiet"] .lia-icon-btn:hover {
+  background: var(--surface-2);
+  color: var(--foreground);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+:root[data-theme="quiet"] .lia-icon-btn[data-active="true"] {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--accent);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: chips — flat, no glass
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-chip {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--muted-foreground);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:root[data-theme="quiet"] .lia-chip:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--foreground);
+  box-shadow: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: sidebar items — minimal, just hover bg
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-sidebar-item {
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+:root[data-theme="quiet"] .lia-sidebar-item:hover {
+  background: var(--surface-2);
+}
+
+:root[data-theme="quiet"] .lia-sidebar-item[data-active="true"] {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-color: transparent;
+}
+
+:root[data-theme="quiet"] .lia-sidebar-item[data-active="true"]::before {
+  background: var(--accent);
+  box-shadow: none;
+  width: 0.125rem;
+  height: 1rem;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: chat messages — flat, no shadow, no glass
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-msg-user {
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--foreground);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+:root[data-theme="quiet"] .lia-msg-companion {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+:root[data-theme="quiet"] .lia-msg-agent-step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--accent-2);
+  color: var(--muted-foreground);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:root[data-theme="quiet"] .lia-msg-tool-call {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+
+:root[data-theme="quiet"] .lia-citation {
+  background: color-mix(in srgb, var(--accent-2) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-2) 16%, transparent);
+  color: var(--accent-2);
+}
+
+:root[data-theme="quiet"] .lia-citation:hover {
+  background: color-mix(in srgb, var(--accent-2) 14%, transparent);
+  box-shadow: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: avatar column — flat, no gradient
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-avatar-col-full,
+:root[data-theme="quiet"] .lia-avatar-col-portrait {
+  background: var(--surface);
+}
+
+:root[data-theme="quiet"] .lia-avatar-col-full,
+:root[data-theme="quiet"] .lia-avatar-col-portrait.lia-avatar-side-right {
+  border-left: 1px solid var(--border);
+}
+
+:root[data-theme="quiet"] .lia-avatar-col-portrait.lia-avatar-side-left {
+  border-left: none;
+  border-right: 1px solid var(--border);
+}
+
+:root[data-theme="quiet"] .lia-avatar-glow {
+  box-shadow: none;
+}
+
+:root[data-theme="quiet"] .lia-emotion-aura {
+  opacity: 0.20;
+  filter: blur(12px);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: panels — flat white
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+:root[data-theme="quiet"] .lia-panel-inset {
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: composer — minimal, subtle border on focus
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-chat-composer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+}
+
+:root[data-theme="quiet"] .lia-chat-composer:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: drawer — flat panel
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-drawer-overlay {
+  background: rgba(31, 34, 38, 0.18);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:root[data-theme="quiet"] .lia-drawer-panel {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: sidebar — flat
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-sidebar-episodes,
+:root[data-theme="quiet"] aside[class*="lia-sidebar"] {
+  background: var(--sidebar);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: onboarding cards — flat
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-onboarding-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+:root[data-theme="quiet"] .lia-onboarding-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border));
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+
+:root[data-theme="quiet"] .lia-onboarding-card-icon {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  box-shadow: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: kbd — flat
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-kbd {
+  background: var(--surface-2);
+  border-color: var(--border);
+  color: var(--muted-foreground);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: text helpers — no text-shadow
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-text-display,
+:root[data-theme="quiet"] .lia-text-2xl,
+:root[data-theme="quiet"] .lia-text-xl {
+  text-shadow: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: cursor — simple blink
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-cursor::after {
+  color: var(--accent);
+  text-shadow: none;
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: status dot — solid, no glow
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-status-dot {
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: scrollbar — neutral gray
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] ::-webkit-scrollbar-thumb {
+  background: rgba(31, 34, 38, 0.14);
+}
+
+:root[data-theme="quiet"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(31, 34, 38, 0.28);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: selection — sage
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] ::selection {
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--foreground);
+}
+
+/* ──────────────────────────────────────────────────────────────────────
+   QUIET: stage fab / popover — flat white
+   ────────────────────────────────────────────────────────────────────── */
+:root[data-theme="quiet"] .lia-stage-fab {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-theme="quiet"] .lia-stage-popover {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border: 1px solid var(--border);
+}
+
+:root[data-theme="quiet"] .lia-glass,
+:root[data-theme="quiet"] .lia-glass-strong {
+  background: var(--surface);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ============================================================================
+   CROSS-FADE TRANSITION — плавный переход между темами (~280ms)
+   Применяется через body.lia-theme-transition когда тема меняется.
+   JS добавляет класс перед сменой темы и убирает после transition end.
+   ========================================================================== */
+
+.lia-theme-transition,
+.lia-theme-transition *,
+.lia-theme-transition *::before,
+.lia-theme-transition *::after {
+  transition:
+    background-color 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    fill 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1),
+    text-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Не трогаем элементы, которые сами управляют transition (анимации, drag) */
+.lia-theme-transition .lia-breathing,
+.lia-theme-transition .lia-blink,
+.lia-theme-transition .lia-cursor::after,
+.lia-theme-transition .lia-talking .lia-mouth,
+.lia-theme-transition .lia-fade-in,
+.lia-theme-transition .lia-mood-sparkle,
+.lia-theme-transition .lia-emotion-aura,
+.lia-theme-transition .lia-icon-btn[data-active="true"],
+.lia-theme-transition [data-state="running"] {
+  transition: none !important;
+}
+
+/* ============================================================================
+   THEME PICKER — UI компонент для выбора темы в settings
+   ========================================================================== */
+
+.lia-theme-card {
+  position: relative;
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.625rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.lia-theme-card:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.lia-theme-card[data-active="true"] {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.lia-theme-card-preview {
+  height: 4.5rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--border);
+}
+
+/* Classic preview */
+.lia-theme-card-preview-classic {
+  background: #f7f4ef;
+  background-image:
+    radial-gradient(ellipse 100% 70% at 30% 30%, rgba(201, 168, 134, 0.18), transparent 60%);
+}
+
+/* Quiet preview */
+.lia-theme-card-preview-quiet {
+  background: #fafaf7;
+}
+
+/* WOW preview — flat dark, no orbs */
+.lia-theme-card-preview-wow {
+  background: #0d0a14;
+  background-image:
+    linear-gradient(135deg, rgba(255, 138, 91, 0.18) 0%, transparent 45%),
+    linear-gradient(225deg, rgba(109, 213, 255, 0.10) 0%, transparent 40%);
+}
+
+.lia-theme-card-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--foreground);
+  margin-bottom: 0.125rem;
+}
+
+.lia-theme-card-desc {
+  font-size: 0.6875rem;
+  color: var(--muted-foreground);
+  line-height: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lia-theme-card-check {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  background: var(--accent);
+  color: var(--accent-foreground);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.lia-theme-card[data-active="true"] .lia-theme-card-check {
+  display: flex;
+}
+
+

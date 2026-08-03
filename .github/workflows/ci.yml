@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── Lint + typecheck + unit tests on Node 22/24 ───────────────────
+  test:
+    name: typecheck + test (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["22", "24"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Approve install scripts (native addons)
+        run: npm approve-scripts --allow-scripts-pending -y || true
+
+      - name: Typecheck all workspaces
+        run: npm run typecheck
+
+      - name: Run tests
+        run: npm run test
+        env:
+          LIA_DB_PATH: /tmp/lia-test.db
+          LIA_LOG_LEVEL: warn
+
+  # ─── Bun runtime compat (M0 deliverable) ──────────────────────────
+  bun-compat:
+    name: bun compat smoke
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3"
+      - name: Install dependencies (bun)
+        run: bun install
+      - name: Smoke: import backend, hit /api/health
+        run: |
+          bun --filter @lia/backend run src/index.ts &
+          BACKEND_PID=$!
+          sleep 3
+          curl -sS http://127.0.0.1:8787/api/health | tee /tmp/health.json
+          kill $BACKEND_PID 2>/dev/null || true
+          jq -e '.status == "ok" and .sqliteVec == true' /tmp/health.json
+
+  # ─── Build (frontend + backend bundles) ───────────────────────────
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm install --no-audit --no-fund
+      - run: npm approve-scripts --allow-scripts-pending -y || true
+      - name: Build all
+        run: npm run build
+
+  # ─── Tauri build (only on Linux for CI; user builds locally for other OSes) ─
+  tauri-build:
+    name: tauri build (linux)
+    runs-on: ubuntu-latest
+    needs: [build]
+    # Skip on PRs from forks (no Tauri system deps cached). Optional.
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Install Tauri system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libgtk-3-dev \
+            libsoup-3.0-dev
+      - run: npm install --no-audit --no-fund
+      - run: npm approve-scripts --allow-scripts-pending -y || true
+      - name: Build Tauri bundle
+        run: npm run tauri:build
+        working-directory: apps/desktop
+
+  # ─── Asset license gate (M8 — active) ──
+  asset-license-check:
+    name: asset license gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify ASSET_LICENSES.md exists and is non-empty
+        run: |
+          test -f ASSET_LICENSES.md
+          # Check it has at least 5 dependency entries (rows in the table)
+          rows=$(grep -c '^|' ASSET_LICENSES.md || true)
+          if [ "$rows" -lt 10 ]; then
+            echo "ASSET_LICENSES.md has too few entries ($rows rows)"
+            exit 1
+          fi
+      - name: Verify all bundled deps have license declarations
+        run: |
+          # Check that ASSET_LICENSES.md mentions key dependencies
+          for dep in Hono better-sqlite3 Drizzle "Vercel AI SDK" React Vite Tailwind Zustand three.js; do
+            if ! grep -qi "$dep" ASSET_LICENSES.md; then
+              echo "Missing license declaration for: $dep"
+              exit 1
+            fi
+          done
+          echo "✓ All key dependencies have license declarations"

@@ -1,0 +1,128 @@
+# ============================================================================
+# CI — static checks, tests and production build on every push/PR to main
+# ============================================================================
+#
+# Что делает:
+#   1. Checkout кода
+#   2. Устанавливает Bun (используется проектом — см. bun.lock)
+#   3. bun install — зависимости с кэшированием
+#   4. type-check app + tests, lint, script syntax
+#   5. vitest run (как test:ci) — unit + integration, без llm-judge
+#   6. production build on Linux after the test matrix
+#
+# Не делает:
+#   - llm-judge — требует Ollama, только локально (`bun run test` / `test:safe:local:judge`)
+#   - deploy — single-user local-first, deploy не нужен
+#
+# Cache: bun cache + vite cache через actions/cache
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Type-check & Tests (${{ matrix.os }})
+    # matrix.os доступен только на уровне job — per-OS cancel при новом push
+    concurrency:
+      group: ci-${{ github.ref }}-${{ matrix.os }}
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false  # не отменять другие OS при failure одной
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - name: Cache bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: bunx prisma generate
+
+      - name: Initialize test DB
+        run: bun run db:force-push
+        env:
+          DATABASE_URL: file:../db/custom.db
+
+      - name: Type-check
+        run: bun run typecheck
+
+      - name: Type-check tests
+        run: bun run typecheck:tests
+
+      - name: Lint
+        run: bun run lint
+
+      - name: Check script syntax
+        run: bun run check:scripts
+
+      - name: Run tests
+        run: bunx vitest run --config vitest.config.mts --exclude 'tests/llm-judge/**'
+        env:
+          DATABASE_URL: file:../db/custom.db
+          LIA_ENCRYPTION_KEY: cIdkZW1vLWtleS1mb3ItY2ktdGVzdHMtb25seS1kb250LXVzZS1pbi1wcm9k
+
+      - name: Upload test results on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}
+          path: |
+            test-results/
+            coverage/
+          retention-days: 7
+
+  build:
+    name: Production build
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: bunx prisma generate
+
+      - name: Initialize build DB
+        run: bun run db:force-push
+        env:
+          DATABASE_URL: file:../db/custom.db
+
+      - name: Build Next.js
+        run: bun run build
+        env:
+          DATABASE_URL: file:../db/custom.db
+          LIA_ENCRYPTION_KEY: cIdkZW1vLWtleS1mb3ItY2ktdGVzdHMtb25seS1kb250LXVzZS1pbi1wcm9k

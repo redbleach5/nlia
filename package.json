@@ -1,0 +1,42 @@
+{
+  "name": "lia-v3",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lia v3 — greenfield rewrite (Hono + React 19 + Vite + Tauri 2.0 + Drizzle + sqlite-vec)",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:backend": "npm run dev --workspace @lia/backend",
+    "dev:frontend": "npm run dev --workspace @lia/desktop",
+    "dev": "concurrently -n backend,frontend -c blue,magenta \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "build:backend": "npm run build --workspace @lia/backend",
+    "build:frontend": "npm run build --workspace @lia/desktop",
+    "build": "npm run build:backend && npm run build:frontend",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "db:generate": "npm run db:generate --workspace @lia/backend",
+    "db:migrate": "npm run db:migrate --workspace @lia/backend",
+    "db:push": "npm run db:push --workspace @lia/backend",
+    "tauri:dev": "npm run tauri:dev --workspace @lia/desktop",
+    "tauri:build": "npm run tauri:build --workspace @lia/desktop",
+    "clean": "rimraf \"apps/*/dist\" \"apps/*/node_modules\" \"packages/*/dist\" \"packages/*/node_modules\" \"node_modules\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "allowScripts": {
+    "better-sqlite3@11.10.0": true,
+    "esbuild@0.18.20": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.19.12": true,
+    "esbuild@0.28.1": true
+  }
+}

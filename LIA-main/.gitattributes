@@ -1,0 +1,76 @@
+# ============================================================================
+# .gitattributes — контроль line endings и binary detection
+# ============================================================================
+#
+# ПРОБЛЕМА: на Windows git по умолчанию конвертирует LF → CRLF при checkout
+# (core.autocrlf=true). Это ломает bash-скрипты — bash не понимает \r и
+# выдаёт ошибки вида:
+#   $'\r': command not found
+#   set: pipefail: invalid option name
+#
+# РЕШЕНИЕ: форсируем LF для всех текстовых файлов, которые должны работать
+# в Unix-окружении (shell-скрипты, Dockerfile, конфиги). На Windows они
+# сохранят LF при checkout — bash (Git Bash / WSL) будет работать корректно.
+#
+# Применение к существующему репозиторию:
+#   git add --renormalize .
+#   git commit -m "chore: enforce LF line endings via .gitattributes"
+
+# ── Default: text with LF endings ──
+# Все текстовые файлы по умолчанию используют LF (Unix).
+# Это безопасно — Windows-инструменты (Node, git, VS Code) работают с LF.
+* text=auto eol=lf
+
+# ── Shell scripts — строго LF (bash не переносит \r) ──
+*.sh         text eol=lf
+*.bash       text eol=lf
+*.zsh        text eol=lf
+
+# ── PowerShell — CRLF (Windows-native, PS корректно обрабатывает оба) ──
+*.ps1        text eol=crlf
+*.psm1       text eol=crlf
+
+# ── Windows batch files — CRLF ──
+*.bat        text eol=crlf
+*.cmd        text eol=crlf
+
+# ── Node.js / config files — LF ──
+*.mjs        text eol=lf
+*.cjs        text eol=lf
+*.js         text eol=lf
+*.ts         text eol=lf
+*.tsx        text eol=lf
+*.json       text eol=lf
+*.yml        text eol=lf
+*.yaml       text eol=lf
+*.toml       text eol=lf
+*.env*       text eol=lf
+*.lockb      binary
+
+# ── Markdown / docs — LF ──
+*.md         text eol=lf
+*.txt        text eol=lf
+
+# ── Binary files — не трогать никогда ──
+*.png        binary
+*.jpg        binary
+*.jpeg       binary
+*.gif        binary
+*.ico        binary
+*.svg        binary
+*.pdf        binary
+*.zip        binary
+*.tar        binary
+*.gz         binary
+*.vrm        binary
+*.glb        binary
+*.gltf       binary
+*.onnx       binary
+*.pt         binary
+*.db         binary
+*.sqlite     binary
+*.sqlite3    binary
+*.node       binary
+*.so         binary
+*.dylib      binary
+*.dll        binary

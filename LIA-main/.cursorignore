@@ -1,0 +1,53 @@
+# Cursor indexing / agent file access — keep low-signal out of context.
+# Soft guidance lives in AGENTS.md; this file is a hard exclude for noise & secrets.
+
+# Dependencies & build
+node_modules/
+.pnp
+.pnp.js
+.yarn/
+.next/
+out/
+build/
+dist/
+coverage/
+*.tsbuildinfo
+
+# Runtime DB & local state
+db/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Secrets (keep .env.example readable — do not ignore it)
+.env
+.env.local
+.env.*.local
+
+# Logs & diagnostics
+*.log
+diagnose-*.log
+dev.log
+server.log
+
+# Large / generated / user data
+download/
+upload/
+public/models/*.vrm
+*.pt
+*.onnx
+*.safetensors
+*.gguf
+*.bin
+ollama-backup-*.json
+
+# Side tooling (not Lia product source)
+.zscripts/
+tool-results/
+mini-services/
+examples/
+
+# Cursor / agent scratch (plans are optional to read — exclude bulky transcripts)
+.cursor/projects/
+**/agent-transcripts/

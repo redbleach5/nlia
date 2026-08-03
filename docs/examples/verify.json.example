@@ -1,0 +1,14 @@
+{
+  "commands": [
+    {
+      "name": "typecheck",
+      "command": "npm run typecheck",
+      "description": "TypeScript check"
+    },
+    {
+      "name": "test",
+      "command": "npm test -- --run",
+      "description": "Unit tests"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "hosts": [
+    "user@staging.example.com",
+    "user@prod.example.com"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "presets": [
+    {
+      "name": "staging",
+      "command": "npm run deploy:staging",
+      "description": "Deploy to staging"
+    },
+    {
+      "name": "prod",
+      "command": "npm run deploy",
+      "description": "Deploy to production"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "name": "@lia/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --config vitest.config.mts",
+    "test:watch": "vitest --config vitest.config.mts",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "tsx src/db/push.ts",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:studio": "drizzle-kit studio",
+    "migrate:v2": "tsx scripts/migrate-v2-to-v3.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^3.0.0",
+    "@hono/node-server": "^2.0.12",
+    "@hono/zod-validator": "^0.4.2",
+    "@lia/shared": "*",
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "ai": "^7.0.0",
+    "better-sqlite3": "^11.7.0",
+    "chokidar": "^4.0.3",
+    "dotenv": "^16.4.7",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.6.14",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.0.0",
+    "sqlite-vec": "^0.1.7-alpha.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.5",
+    "drizzle-kit": "^0.31.10",
+    "esbuild": "^0.19.12",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^4.1.10"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
